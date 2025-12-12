@@ -158,11 +158,17 @@ const BASE_URL = "http://localhost:5097/Focus";
         document.getElementById("loginForm").style.display = tab === "login" ? "block" : "none";
         document.getElementById("registerForm").style.display = tab === "register" ? "block" : "none";
     }
-
+/*
     function logout() {
         localStorage.removeItem("loggedUser");
         location.reload();
-    }
+    }*/
+    function logout() {
+       localStorage.removeItem("loggedUser");
+       appPage.classList.remove("active");
+       loginPage.style.display = "flex"; 
+   }
+   
     
     /* APP  */
     function openApp(username) {
@@ -243,13 +249,22 @@ const BASE_URL = "http://localhost:5097/Focus";
     
             const todayStr = new Date().toLocaleDateString("tr-TR");
     
-            const totalMinutes = mySessions
-                .filter(s =>
-                    isTimerCompleted(s.id) === true &&
-                    new Date(s.startTime).toLocaleDateString("tr-TR") === todayStr
-                )
-                .reduce((sum, s) => sum + s.durationMinutes, 0);
-    
+            let totalMinutes = 0;
+
+mySessions.forEach(s => {
+    const completed =
+        isTimerCompleted(s.id) === true ||
+        s.completed === true ||
+        s.completed === "true";
+
+    const isToday =
+        new Date(s.startTime).toLocaleDateString("tr-TR") === todayStr;
+
+    if (completed && isToday) {
+        totalMinutes += s.durationMinutes;
+    }
+});
+
             todaySummary.textContent =
                 totalMinutes === 0
                     ? "Bugün için kayıtlı odak oturumu yok."
