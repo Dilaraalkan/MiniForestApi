@@ -57,27 +57,26 @@ public class FocusController : ControllerBase
 
     // POST /Focus/finish/{id}
     [HttpPost("finish/{id}")]
-    public IActionResult FinishSession(int id)
+public IActionResult Finish(int id, [FromQuery] bool completed)
+{
+    try
     {
-        try
-        {
-            var found = sessions.FirstOrDefault(x => x.Id == id);
-            if (found == null)
-                return BadRequest(Response<FocusSessionDto>.Fail("Oturum bulunamadı."));
+        var session = sessions.FirstOrDefault(x => x.Id == id);
 
-            if (!found.IsCompleted)
-            {
-                found.EndTime = DateTime.Now;
-                found.IsCompleted = true;
-            }
+        if (session == null)
+            return BadRequest(Response<FocusSessionDto>.Fail("Oturum bulunamadı."));
 
-            return Ok(Response<FocusSessionDto>.Successful(new FocusSessionDto(found)));
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(Response<FocusSessionDto>.Fail(ex.Message));
-        }
+        session.IsCompleted = completed;
+        session.EndTime = DateTime.Now;
+
+        return Ok(Response<FocusSessionDto>.Successful(new FocusSessionDto(session)));
     }
+    catch (Exception ex)
+    {
+        return BadRequest(Response<FocusSessionDto>.Fail(ex.Message));
+    }
+}
+
 
     // GET /Focus/today
     [HttpGet("today")]

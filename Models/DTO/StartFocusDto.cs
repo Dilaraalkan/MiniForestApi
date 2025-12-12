@@ -1,8 +1,4 @@
- /*public class StartFocusDto(int DurationMinutes)
-{
-    public int DurationMinutes { get; set; } = DurationMinutes;
-}
-*/
+
 public class StartFocusDto
 {
     public int DurationMinutes { get; set; }
