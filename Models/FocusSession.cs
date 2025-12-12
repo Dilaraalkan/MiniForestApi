@@ -9,4 +9,10 @@ public class FocusSession
     public DateTime StartTime { get; set; }
     public DateTime? EndTime { get; set; }
     public bool IsCompleted { get; set; }
+
+    public int UserId { get; set; }
+
+    public string TreeType { get; set; } = "🌲";
+
+    public string? Note { get; set; }
 }
