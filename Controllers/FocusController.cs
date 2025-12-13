@@ -1,121 +1,147 @@
 using Microsoft.AspNetCore.Mvc;
-using MiniForestApp.Models; // yine kendi namespace'ine göre düzelt
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using MiniForestApi.Models.DTO;
+using MiniForestApp.Models;
+using MiniForestApp.Models.DTO; 
+
+namespace MiniForestApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 public class FocusController : ControllerBase
 {
-    // Verileri RAM'de tutan static liste
-    private static List<FocusSession> sessions = new List<FocusSession>();
+    private readonly MiniForestDbContext _context;
 
-    // GET /Focus
+    public FocusController(MiniForestDbContext context)
+    {
+        _context = context;
+    }
+
+    // [GET] Tüm oturumlar (Test için)
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-        try
-        {
-            var result = sessions.Select(x => new FocusSessionDto(x)).ToList();
-            return Ok(Response<List<FocusSessionDto>>.Successful(result));
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(Response<List<FocusSessionDto>>.Fail(ex.Message));
-        }
+        var sessions = await _context.FocusSessions.ToListAsync();
+        return Ok(new { success = true, body = sessions });
     }
 
-    // POST /Focus/start
+    // [GET] Kullanıcıya özel oturumlar
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> GetUserSessions(int userId)
+    {
+        var sessions = await _context.FocusSessions
+            .Where(s => s.UserId == userId)
+            .OrderByDescending(s => s.StartTime)
+            .ToListAsync();
+
+        return Ok(new { success = true, body = sessions });
+    }
+
+    // [POST] Yeni oturum başlat
     [HttpPost("start")]
-    public IActionResult StartSession(StartFocusDto dto)
+    public async Task<IActionResult> StartSession([FromBody] StartFocusDto request)
     {
-        try
+        if (request.DurationMinutes < 1)
+            return BadRequest(new { success = false, message = "Süre en az 1 dakika olmalı." });
+
+        if (request.UserId <= 0)
+            return BadRequest(new { success = false, message = "Geçersiz kullanıcı ID." });
+
+        // Kullanıcı kontrolü
+        var userExists = await _context.Users.AnyAsync(u => u.Id == request.UserId);
+        if (!userExists)
+            return NotFound(new { success = false, message = "Kullanıcı bulunamadı." });
+
+        // YENİ OTURUM OLUŞTURULUYOR
+        var session = new FocusSession
         {
-            if (dto.DurationMinutes <= 0)
-                return BadRequest(Response<FocusSessionDto>.Fail("Süre 0'dan büyük olmalıdır."));
+            DurationMinutes = request.DurationMinutes,
+            StartTime = DateTime.Now,
+            IsCompleted = false,
+            UserId = request.UserId,
+            
+            TreeType = request.TreeType 
+        };
 
-            int newId = sessions.Any() ? sessions.Max(x => x.Id) + 1 : 1;
+        _context.FocusSessions.Add(session);
+        await _context.SaveChangesAsync();
 
-            var session = new FocusSession()
-            {
-                Id = newId,
-                DurationMinutes = dto.DurationMinutes,
-                StartTime = DateTime.Now,
-                IsCompleted = false
-            };
-
-            sessions.Add(session);
-
-            return Ok(Response<FocusSessionDto>.Successful(new FocusSessionDto(session)));
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(Response<FocusSessionDto>.Fail(ex.Message));
-        }
+        return Ok(new { success = true, body = session });
     }
 
-    // POST /Focus/finish/{id}
+    // [POST] Oturumu bitir
     [HttpPost("finish/{id}")]
-public IActionResult Finish(int id, [FromQuery] bool completed)
-{
-    try
+    public async Task<IActionResult> FinishSession(int id, [FromQuery] bool completed)
     {
-        var session = sessions.FirstOrDefault(x => x.Id == id);
-
-        if (session == null)
-            return BadRequest(Response<FocusSessionDto>.Fail("Oturum bulunamadı."));
+        var session = await _context.FocusSessions.FindAsync(id);
+        
+        if (session == null) 
+            return NotFound(new { success = false, message = "Oturum bulunamadı." });
 
         session.IsCompleted = completed;
         session.EndTime = DateTime.Now;
 
-        return Ok(Response<FocusSessionDto>.Successful(new FocusSessionDto(session)));
-    }
-    catch (Exception ex)
-    {
-        return BadRequest(Response<FocusSessionDto>.Fail(ex.Message));
-    }
-}
-
-
-    // GET /Focus/today
-    [HttpGet("today")]
-    public IActionResult GetTodaySummary()
-    {
-        try
-        {
-            var today = DateTime.Today;
-            var todaySessions = sessions
-                .Where(x => x.StartTime.Date == today && x.IsCompleted)
-                .ToList();
-
-            var total = todaySessions.Sum(x => x.DurationMinutes);
-
-            var dto = new TodaySummaryDto(today, total);
-
-            return Ok(Response<TodaySummaryDto>.Successful(dto));
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(Response<TodaySummaryDto>.Fail(ex.Message));
-        }
+        await _context.SaveChangesAsync();
+        
+        return Ok(new { success = true, message = "Oturum güncellendi.", body = session });
     }
 
-    // GET /Focus/{id}
+    // 1. GET (Single): Tek bir kaydı getir
+    // Örnek: GET /Focus/5
     [HttpGet("{id}")]
-    public IActionResult GetSession(int id)
+    public async Task<IActionResult> GetSessionById(int id)
     {
-        try
-        {
-            var found = sessions.FirstOrDefault(x => x.Id == id);
-            if (found == null)
-                return BadRequest(Response<FocusSessionDto>.Fail("Oturum bulunamadı."));
+        var session = await _context.FocusSessions.FindAsync(id);
+        if (session == null) 
+            return NotFound(new { success = false, message = "Kayıt bulunamadı." });
 
-            return Ok(Response<FocusSessionDto>.Successful(new FocusSessionDto(found)));
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(Response<FocusSessionDto>.Fail(ex.Message));
-        }
+        return Ok(new { success = true, body = session });
+    }
+
+    // 2. DELETE: Bir kaydı sil
+    // Örnek: DELETE /Focus/5
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteSession(int id)
+    {
+        var session = await _context.FocusSessions.FindAsync(id);
+        if (session == null) 
+            return NotFound(new { success = false, message = "Silinecek kayıt bulunamadı." });
+
+        _context.FocusSessions.Remove(session);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { success = true, message = "Oturum başarıyla silindi." });
+    }
+
+    // 3. PUT: Kaydı tamamen güncelle (Süre, Ağaç ve Not değişir)
+    // Örnek: PUT /Focus/5
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateSessionFull(int id, [FromBody] UpdateSessionDto request)
+    {
+        var session = await _context.FocusSessions.FindAsync(id);
+        if (session == null) return NotFound(new { success = false, message = "Kayıt bulunamadı." });
+
+        // Tüm alanları yenisiyle değiştiriyoruz
+        session.DurationMinutes = request.DurationMinutes;
+        session.TreeType = request.TreeType;
+        session.Note = request.Note;
+
+        await _context.SaveChangesAsync();
+        return Ok(new { success = true, message = "Oturum tamamen güncellendi.", body = session });
+    }
+
+    // 4. PATCH: Sadece bir alanı güncelle (Örn: Sadece Not ekle)
+    // Örnek: PATCH /Focus/5/note
+    [HttpPatch("{id}/note")]
+    public async Task<IActionResult> UpdateSessionNote(int id, [FromBody] string note)
+    {
+        var session = await _context.FocusSessions.FindAsync(id);
+        if (session == null) return NotFound(new { success = false, message = "Kayıt bulunamadı." });
+
+        // Sadece notu değiştiriyoruz, diğerlerine dokunmuyoruz
+        session.Note = note;
+
+        await _context.SaveChangesAsync();
+        return Ok(new { success = true, message = "Not eklendi.", body = session });
     }
 }

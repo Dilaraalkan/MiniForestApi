@@ -1,176 +1,186 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
     <meta charset="UTF-8">
     <title>Mini Forest</title>
 
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-<!-- LOGIN SAYFASI -->
-<div id="loginPage">
-    <div class="login-card">
-        <div class="login-title">🌲 Mini Forest</div>
+    <div id="loginPage">
+        <div class="login-card">
+            <div class="login-title">🌲 Mini Forest</div>
 
-        <div class="login-tabs">
-            <button id="tabLogin" class="active" onclick="showTab('login')">Giriş Yap</button>
-            <button id="tabRegister" onclick="showTab('register')">Kayıt Ol</button>
-        </div>
-
-        <div id="loginForm">
-            <input type="text" id="loginUsername" placeholder="Kullanıcı adı">
-            <input type="password" id="loginPassword" placeholder="Şifre">
-            <button class="login-btn" onclick="login()">Giriş Yap</button>
-        </div>
-
-        <div id="registerForm" style="display:none;">
-            <input type="text" id="registerUsername" placeholder="Kullanıcı adı">
-            <input type="password" id="registerPassword" placeholder="Şifre">
-            <button class="login-btn" onclick="register()">Kayıt Ol</button>
-        </div>
-
-        <div id="loginInfoMessage"></div>
-        <div id="errorMessage"></div>
-    </div>
-</div>
-
-<!-- ================= APP SAYFASI ================= -->
-<div id="appPage">
-    <div class="app-wrapper">
-
-        <!-- NAVBAR -->
-        <header class="navbar">
-            <div class="navbar-left">
-                <span style="font-size: 24px;">🌲</span>
-                <div>
-                    <div class="navbar-title">Mini Forest</div>
-                    <div class="navbar-subtitle">Odak Süreni Yeşerten Uygulama</div>
-                </div>
+            <div class="login-tabs">
+                <button id="tabLogin" class="active" onclick="showTab('login')">Giriş Yap</button>
+                <button id="tabRegister" onclick="showTab('register')">Kayıt Ol</button>
             </div>
 
-            <div class="navbar-right">
-                <span class="navbar-user" id="navbarUser"></span>
-                <button id="themeToggle" class="theme-toggle">🌙</button>
-                <button class="btn-small" onclick="logout()">Çıkış Yap</button>
+            <div id="loginForm">
+                <input type="text" id="loginUsername" placeholder="Kullanıcı adı">
+                <input type="password" id="loginPassword" placeholder="Şifre">
+                <button class="login-btn" onclick="login()">Giriş Yap</button>
             </div>
-        </header>
 
-        <!-- İÇERİK -->
-        <main class="app-main">
+            <div id="registerForm" style="display:none;">
+                <input type="text" id="registerUsername" placeholder="Kullanıcı adı">
+                <input type="password" id="registerPassword" placeholder="Şifre">
+                <button class="login-btn" onclick="register()">Kayıt Ol</button>
+            </div>
 
-            <!-- SOL KOLON -->
-            <section class="column">
-                <div class="container-header">
-                    <h2 class="section-title">Oturum İşlemleri</h2>
-                </div>
-
-                <div class="card">
-                    <h3 style="margin:0 0 10px 0; font-size:17px; color:#4caf50;">
-                        Yeni Odak Oturumu
-                    </h3>
-
-                    <p style="margin:0 0 12px 0; font-size:14px; color:#6b7280;">
-                        Süreyi seç, başlata tıkla ve odak süreni ormana dönüştür. 🌱
-                    </p>
-
-                    <label>
-                        Süre (dakika):
-                        <input id="durationInput" type="number" value="25" min="1">
-                    </label>
-
-                    <div style="margin-top:10px;">
-                        <button onclick="startSession()">Başlat</button>
-                        <button class="secondary" onclick="finishSession(false)">Bitir</button>
-                    </div>
-
-                    <p style="margin-top:15px; font-size:14px;">
-                        <strong>Aktif Oturum ID:</strong>
-                        <span id="currentSessionId">Yok</span><br>
-                        <strong>Geri Sayım:</strong>
-                        <span id="timerDisplay">-</span>
-                    </p>
-
-                    <p id="motivationQuote" class="quote-text"></p>
-                </div>
-
-                <div class="card">
-                    <h3 style="margin:0 0 10px 0; font-size:17px; color:#4caf50;">
-                        Tüm Oturumlar
-                    </h3>
-
-                    <div style="margin-bottom:8px;">
-                        <button onclick="toggleSessions()">Gizle / Göster</button>
-                        <button class="secondary" onclick="clearSessions()">Tümünü Sil</button>
-                    </div>
-
-                    <ul id="sessionsList"></ul>
-                </div>
-            </section>
-
-            <!-- SAĞ KOLON -->
-            <section class="column">
-
-                <div class="card">
-                    <h3 style="margin:0 0 10px 0; font-size:17px; color:#4caf50;">
-                        Bugünkü Toplam Süre
-                    </h3>
-
-                    <button onclick="loadToday()">Bugünü Getir</button>
-                    <p id="todaySummary" style="margin-top:10px;">Henüz yüklenmedi.</p>
-                </div>
-
-                <div class="card">
-                    <h3 style="margin:0 0 10px 0; font-size:17px; color:#4caf50;">
-                        İstatistikler
-                    </h3>
-
-                    <p style="font-size:14px; margin:0 0 10px 0; color:#6b7280;">
-                        Günlere göre toplam odak süren:
-                    </p>
-
-                    <canvas id="statsChart" height="150"></canvas>
-                </div>
-
-                <div class="card">
-                    <h3 style="margin:0 0 10px 0; font-size:17px; color:#4caf50;">
-                        🌳 Mini Orman
-                    </h3>
-
-                    <p style="font-size:14px; margin:0 0 10px 0; color:#6b7280;">
-                        Her tamamlanan odak oturumu otomatik olarak bir fidan ekler 🌱
-                    </p>
-
-                    <label for="treeType" style="font-size:14px;">Ağaç türü:</label>
-
-                    <select id="treeType" style="margin-left:8px; padding:6px 8px; border-radius:8px;">
-                        <option value="🌱">Fidan</option>
-                        <option value="🌳">Çınar</option>
-                        <option value="🌲">Çam</option>
-                        <option value="🌴">Palmiye</option>
-                        <option value="🌸">Kiraz</option>
-                    </select>
-
-                    <button class="secondary"
-                            style="margin-left:10px; margin-top:8px;"
-                            onclick="clearForest()">
-                        Ormanı Temizle
-                    </button>
-
-                    <div id="forestGrid" class="forest-grid"></div>
-                </div>
-
-            </section>
-        </main>
+            <div id="loginInfoMessage"></div>
+            <div id="errorMessage"></div>
+        </div>
     </div>
-</div>
 
-<!-- JS -->
-<script src="js/app.js"></script>
+    <div id="appPage">
+        <div class="app-wrapper">
+
+            <header class="navbar">
+                <div class="navbar-left">
+                    <span style="font-size: 24px;">🌲</span>
+                    <div>
+                        <div class="navbar-title">Mini Forest</div>
+                        <div class="navbar-subtitle">Odak Süreni Yeşerten Uygulama</div>
+                    </div>
+                </div>
+
+                <div class="navbar-right">
+                    <span class="navbar-user" id="navbarUser"></span>
+                    <button id="themeToggle" class="theme-toggle">🌙</button>
+                    <button class="btn-small" onclick="logout()">Çıkış Yap</button>
+                </div>
+            </header>
+
+            <main class="app-main">
+
+                <section class="column">
+
+                    <div class="card">
+                        <h3 class="card-title">Yeni Odak Oturumu</h3>
+                        <p class="card-desc">Süreyi seç, başlata tıkla ve odak süreni ormana dönüştür. 🌱</p>
+
+                        <label>Süre (dakika):
+                            <input id="durationInput" type="number" value="25" min="1">
+                        </label>
+
+                        <div style="margin-top:10px;">
+                            <button onclick="startSession()">Başlat</button>
+                            <button class="secondary" onclick="finishSession(false)">Bitir</button>
+                        </div>
+
+                        <p style="margin-top:15px; font-size:14px;">
+                            <strong>Geri Sayım:</strong> <span id="timerDisplay">-</span>
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">Tüm Oturumlar</h3>
+                        <div style="margin-bottom:8px;">
+                            <button onclick="toggleSessions()">Gizle / Göster</button>
+                        </div>
+                        <ul id="sessionsList"></ul>
+                    </div>
+                </section>
+
+                <section class="column">
+
+                    <div class="card">
+                        <h3 class="card-title">Bugünkü Toplam Süre</h3>
+                        <p id="todaySummary" style="margin-top:10px;">Yükleniyor...</p>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">İstatistikler</h3>
+                        <canvas id="statsChart" height="150"></canvas>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">🌳 Mini Orman</h3>
+                        <p class="card-desc">Her tamamlanan odak oturumu otomatik olarak bir fidan ekler 🌱</p>
+
+                        <div class="form-group" style="margin-top: 10px;">
+                            <label for="treeType" style="font-weight: bold; margin-right: 5px;">Hangi ağacı
+                                dikeceksin?</label>
+                            <select id="treeType" class="form-control"
+                                style="padding: 8px; border-radius: 8px; border: 1px solid #ccc; width: 100%;">
+                                <option value="🌲">🌲 Çam Ağacı</option>
+                                <option value="🌳">🌳 Çınar / Meşe</option>
+                                <option value="🌸">🌸 Kiraz Çiçeği</option>
+                                <option value="🌴">🌴 Palmiye</option>
+                                <option value="🌵">🌵 Kaktüs</option>
+                                <option value="🍁">🍁 Sonbahar Ağacı</option>
+                                <option value="🍄">🍄 Mantar Evi</option>
+                            </select>
+                        </div>
+
+                        <div id="forestGrid" class="forest-grid"></div>
+                    </div>
+
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div id="focusModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="focusStatusText">Odaklanılıyor...</h2>
+            <div id="modalTimerDisplay" class="huge-timer">25:00</div>
+            <div class="tree-animation-container">
+                <div id="growingTree" class="tree-emoji">🌱</div>
+            </div>
+            <p class="motivation-text" id="modalQuote">"Her büyük orman, küçük bir tohumla başlar."</p>
+            <button class="btn-cancel" onclick="finishSession(false)">Pes Et (İptal)</button>
+        </div>
+    </div>
+
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content" style="background: white; color: #333; max-width: 350px;">
+            <h3 style="color: #2e7d32; margin-bottom: 15px;">Oturumu Düzenle 📝</h3>
+
+            <input type="hidden" id="editSessionId">
+
+            <div class="form-group">
+                <label>Süre (dk):</label>
+                <input type="number" id="editDuration" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Ağaç Türü:</label>
+                <select id="editTreeType" class="form-control">
+                    <option value="🌲">🌲 Çam</option>
+                    <option value="🌳">🌳 Çınar</option>
+                    <option value="🌸">🌸 Kiraz</option>
+                    <option value="🌴">🌴 Palmiye</option>
+                    <option value="🌵">🌵 Kaktüs</option>
+                    <option value="🍁">🍁 Sonbahar</option>
+                    <option value="🍄">🍄 Mantar</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Notun:</label>
+                <textarea id="editNote" class="form-control" rows="3" placeholder="Nasıl geçti?"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button onclick="saveSessionEdit()"
+                    style="background: #2e7d32; color: white; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;">Kaydet</button>
+                <button onclick="closeEditModal()"
+                    style="background: #ccc; color: #333; padding: 8px 16px; border: none; border-radius: 5px; cursor: pointer;">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+
 </body>
+
 </html>

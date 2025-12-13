@@ -1,31 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "/Users/dilaraalkan/Downloads/MiniForestApi-main/MiniForestApi/MiniForestApi.csproj": {}
+    "C:\\Users\\gozde\\OneDrive\\Masaüstü\\MiniForestApi\\MiniForestApi.csproj": {}
   },
   "projects": {
-    "/Users/dilaraalkan/Downloads/MiniForestApi-main/MiniForestApi/MiniForestApi.csproj": {
+    "C:\\Users\\gozde\\OneDrive\\Masaüstü\\MiniForestApi\\MiniForestApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/dilaraalkan/Downloads/MiniForestApi-main/MiniForestApi/MiniForestApi.csproj",
+        "projectUniqueName": "C:\\Users\\gozde\\OneDrive\\Masaüstü\\MiniForestApi\\MiniForestApi.csproj",
         "projectName": "MiniForestApi",
-        "projectPath": "/Users/dilaraalkan/Downloads/MiniForestApi-main/MiniForestApi/MiniForestApi.csproj",
-        "packagesPath": "/Users/dilaraalkan/.nuget/packages/",
-        "outputPath": "/Users/dilaraalkan/Downloads/MiniForestApi-main/MiniForestApi/obj/",
+        "projectPath": "C:\\Users\\gozde\\OneDrive\\Masaüstü\\MiniForestApi\\MiniForestApi.csproj",
+        "packagesPath": "C:\\Users\\gozde\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\gozde\\OneDrive\\Masaüstü\\MiniForestApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/dilaraalkan/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\gozde\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net7.0"
+          "net9.0"
         ],
         "sources": {
-          "/usr/local/share/dotnet/library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net7.0": {
-            "targetAlias": "net7.0",
+          "net9.0": {
+            "targetAlias": "net9.0",
             "projectReferences": {}
           }
         },
@@ -33,27 +32,39 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
-        "net7.0": {
-          "targetAlias": "net7.0",
+        "net9.0": {
+          "targetAlias": "net9.0",
           "dependencies": {
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[7.0.10, )"
+              "version": "[8.0.2, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[7.0.20, )"
+              "version": "[8.0.2, )"
             },
-            "Microsoft.EntityFrameworkCore.InMemory": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
-              "version": "[7.0.20, )"
+              "version": "[8.0.2, )"
             },
             "Pomelo.EntityFrameworkCore.MySql": {
               "target": "Package",
-              "version": "[7.0.0, )"
+              "version": "[8.0.2, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[10.0.1, )"
             }
           },
           "imports": [
@@ -75,7 +86,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.401/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.306/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
