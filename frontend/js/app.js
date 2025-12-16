@@ -317,23 +317,37 @@ async function startSession() {
 }
 
 async function finishSession(completed) {
-    if (!currentSessionId) return;
-    closeModal();
+    // 1. ACİL DURDURMA: Backend cevabını beklemeden sayacı hemen susturuyoruz.
+    clearInterval(timerInterval); 
+    remainingSeconds = 0;
+    
+    // UI'ı hemen sıfırla
+    timerDisplay.textContent = "-"; 
+    modalTimerDisplay.textContent = "00:00";
+    
+    closeModal(); // Modalı kapat
+
+    if (!currentSessionId) return; // Eğer ID yoksa (zaten bitmişse) çık
 
     try {
+        // 2. Backend'e "Bitti" bilgisini gönder
         await fetch(`${API_BASE_URL}/Focus/finish/${currentSessionId}?completed=${completed}`, { method: "POST" });
         
-        if (completed) alert("Tebrikler! Ağaç dikildi. 🌳");
-        else alert("Oturum iptal edildi. 🍂");
+        if (completed) {
+            alert("Tebrikler! Ağaç dikildi. 🌳");
+        } else {
+            // İptal durumunda kullanıcıyı çok darlamaya gerek yok, console'a yazsa yeter
+            console.log("Oturum kullanıcı tarafından iptal edildi.");
+        }
         
         currentSessionId = null;
-        loadUserData(); 
+        loadUserData(); // Listeyi güncelle (İptal olanı kırmızı çarpı ile görmek için)
 
     } catch (err) {
         console.error("Hata:", err);
+        alert("Bağlantı hatası oluştu ama sayaç durduruldu.");
     }
 }
-
 /* --- TIMER & MODAL --- */
 function startTimer(sec) {
     clearInterval(timerInterval);
