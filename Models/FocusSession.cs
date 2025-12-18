@@ -1,6 +1,6 @@
 using System;
 
-namespace MiniForestApp.Models; // burada da kendi namespace'ini kullan
+namespace MiniForestApp.Models;
 
 public class FocusSession
 {

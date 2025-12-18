@@ -4,5 +4,5 @@ public class User
 {
     public int Id { get; set; }
     public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty; // Şimdilik şifreyi düz metin tutalım, ileride şifreleriz.
+    public string Password { get; set; } = string.Empty;
 }

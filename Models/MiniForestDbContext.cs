@@ -18,17 +18,8 @@ public partial class MiniForestDbContext : DbContext
     // MEVCUT TABLO
     public virtual DbSet<FocusSession> FocusSessions { get; set; }
     
-    // YENİ EKLENEN TABLO (User)
     public virtual DbSet<User> Users { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (!optionsBuilder.IsConfigured)
-        {
-            // Design-time tools için gerekirse buraya connection string yazılabilir ama 
-            // şu an Program.cs üzerinden alıyor, burası boş kalabilir.
-        }
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,7 +27,6 @@ public partial class MiniForestDbContext : DbContext
             .UseCollation("utf8mb4_0900_ai_ci")
             .HasCharSet("utf8mb4");
 
-        // --- FocusSession Ayarları (Mevcut) ---
         modelBuilder.Entity<FocusSession>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -50,12 +40,11 @@ public partial class MiniForestDbContext : DbContext
             entity.Property(e => e.IsCompleted).HasColumnName("isCompleted");
         });
 
-        // --- User Ayarları (YENİ EKLENDİ) ---
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.ToTable("users"); // Veritabanında tablo adı 'users' olacak
+            entity.ToTable("users"); 
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Username).HasColumnName("username");

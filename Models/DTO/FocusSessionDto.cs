@@ -9,7 +9,6 @@ public class FocusSessionDto
     public DateTime? EndTime { get; set; }
     public bool IsCompleted { get; set; }
 
-    // Eski primary constructor'un yaptığı işi bu klasik constructor yapıyor
     public FocusSessionDto(FocusSession session)
     {
         Id = session.Id;

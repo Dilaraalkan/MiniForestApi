@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using MiniForestApp.Models; // Eğer hata verirse 'MiniForestApi.Models' dene
+using MiniForestApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. VERITABANI BAGLANTISI (Eksik olan parça buydu)
+// 1. VERITABANI BAGLANTISI 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<MiniForestDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
@@ -12,7 +12,7 @@ builder.Services.AddDbContext<MiniForestDbContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 3. CORS AYARLARI (Frontend erişimi için)
+// 3. CORS AYARLARI 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -36,7 +36,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAll");
 
-app.UseAuthorization(); // İleride Login işlemi için lazım olacak
+app.UseAuthorization();
 
 app.MapControllers();
 

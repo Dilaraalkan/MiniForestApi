@@ -20,13 +20,11 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto request)
     {
-        // 1. Kullanıcı adı zaten var mı?
         if (await _context.Users.AnyAsync(u => u.Username == request.Username))
         {
             return BadRequest("Bu kullanıcı adı zaten alınmış.");
         }
 
-        // 2. Yeni kullanıcı oluştur
         var newUser = new User
         {
             Username = request.Username,
