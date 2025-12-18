@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MiniForestApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6e04269fc1d2dd1720475753a29dd1cc4a539ee8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e8d9e66da997f808aa53987896999e3e8d08accd")]
 [assembly: System.Reflection.AssemblyProductAttribute("MiniForestApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MiniForestApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
